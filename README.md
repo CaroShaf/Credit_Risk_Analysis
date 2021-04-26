@@ -40,45 +40,68 @@ minority class
 6. Easy Ensemble AdaBoost Classifier (ensemble learner) - trained on different balanced boostrap samples. The balancing is achieved by random undersampling.
 
 ## Results
-The results of the six tested models are mixed.  As we progressed through the different types of sampling with linear regression classifiers and on to the ensemble classifiers
-with more sophisticated balancing and minimization techniques for overfitting, we do see improved balanced accuracy scores.  But these scores alone don't tell us everything we
-need to know.  
+The results of the six tested models are mixed and largely unimpressive.  As we progressed through the different types of sampling with linear regression classifiers and on to 
+the ensemble classifiers with more sophisticated balancing and minimization techniques for overfitting, we do see improved balanced accuracy scores.  But these scores alone 
+don't tell us everything we need to know.
 
-INSERT COMPARISONS / CONFUSION GRAPHIC
+This chart contains a summary of the balanced accuracy scores as well as the classification report for each of the six models:
 
-Using the confusion matrices and classification reports for each test (all with random_sample=1, to restrict the dataset to comparable results across models) the following key 
-information can be observed.
+https://github.com/CaroShaf/Credit_Risk_Analysis/blob/main/images/comparisongrid.png
+
+Using the confusion matrices and classification reports (individual images are linked below for each model) for each test (all with random_sample=1, to restrict the dataset to 
+comparable results across models) the following key trends can be observed.
 
 BALANCED ACCURACY SCORES
-Imagine the following scenario, in which a credit card company wishes to detect fraudulent transactions in real time. Historically, out of 100,000 transactions, 10 have been 
-fraudulent. An analyst writes a program to detect fraudulent transactions, but due to an uncaught bug, it flags every transaction as not fraudulent. Out of 100,000 transactions, 
-it correctly classifies the 99,990 transactions that are not fraudulent, and it erroneously classifies all 10 transactions that are fraudulent.
-The program's accuracy score appears to be impressive at 99.99%. However, it fails spectacularly at its job, detecting 0 out of 10 fraudulent transactions, a success rate of 0%.
+As mentioned above, as we traversed through the six models, the balanced accuracy scores improved from a low of .523 (the Linear Regression model with clustered centroid 
+undersampling) to the best of .932 for the Easy Ensemble Classifier.  The balanced accuracy score is simply the average of recall obtained on both classes, so if one of the two
+classes has an especially low recall, the overall balanced accuracy score could still appear to be fairly decent when the majority class scores with perfect recall.  However, in
+these cases, the recall for both classes are fairly close and thus track fairly closely with the balanced accuracy scores.
 
-PRECISION
-Precision = TP/(TP + FP)
-As can be seen in the spreadsheet, and using a generic confusion matrix as a reference, every model (all with random_sample=1, to restrict the dataset to 
-comparable results across models) was able to predict with 100% certainty that low-risk applicants were low-risk. Yet all four logistic regression models only gave about a 1% 
-probability of correctly classifying a high-risk application as a high-risk.  The ensemble models did slightly better at 3% and 6% respectively.
+PRECISION TP/(TP + FP)
+As can be seen in the chart above, all models (all with random_sample=1, to restrict the dataset to comparable results across models) were able to predict with 100% certainty 
+that low-risk applicants were low-risk. Yet all four logistic regression models only gave about a 1% probability of correctly classifying a high-risk application as a high-risk, 
+as there were many false positives (high-risk customers classified as low-risk).  The ensemble models did slightly better at 3% and 9% respectively, but again false positives 
+would necessarily be high in order for the overall precision to be low.  Basically, as great as these models do at predicting low-risk customers being low-risk of defaulting, 
+they outright fail when it comes to this very important group, high-risk customers classed as low-risk and thus with a high likelihood of defaulting.  
 
 RECALL
-Sensitivity = TP/(TP + FN)
-perfect recall means everyone that is classed as high-risk will default, and everyone that is classed as low-risk will not default
+Since recall/sensitivity is calculated by TP/(TP + FN) and our numbers of false negatives are consistently low throughout the different models, the recall/sensitivity in all but 
+one case is greater than 60%.  Again, recall doesn't seem to tell much about the performance of our models since both the number of true positives (as above in precision) and 
+false negatives are low compared to false positives and true negatives.  Perfect recall means everyone that is classed as high-risk will default, and everyone that is classed as 
+low-risk will not default.  Our numbers indicate that our models don't predict either of these groups very well, and as such the relative numbers are low even though relative to 
+each other, their sensitivity appears greater than 60% in all cases.
 
-In summary, there's a fundamental tension between precision and sensitivity. Highly sensitive tests and algorithms tend to be aggressive, as they do a good job of detecting the intended targets, but also risk resulting in a number of false positives. High precision, on the other hand, is usually the result of a conservative process, so that predicted positives are likely true positives; but a number of other true positives may not be predicted.
+The fundamental tension between precision and sensitivity is at work here. Highly sensitive tests and algorithms tend to be aggressive, as they do a good job of detecting the 
+intended targets, but also risk resulting in a number of false positives.  We have more false positives and true negatives than anything else. High precision, on the other hand, 
+is hampered severely in these cases by the large number of false positives and the low number of true positives.
 
-F1 SCORE
-2(Precision * Sensitivity)/(Precision + Sensitivity)
-To illustrate the F1 score, let's return to the scenario of a faulty algorithm for detecting fraudulent credit card transactions. Say that 100 transactions out of 100,000 are fraudulent.
-In such a scenario, the sensitivity is very high, while the precision is very low. Clearly, this is not a useful algorithm. Nor does averaging the sensitivity and precision yield a useful figure. Let's try calculating the F1 score. The F1 score is 0.002. We noted previously that there's usually a trade-off between sensitivity and precision, and that a balance must be struck between the two. A useful way to think about the F1 score is that a pronounced imbalance between sensitivity and precision will yield a low F1 score.
+F1 SCORE  2(Precision * Sensitivity)/(Precision + Sensitivity)
+In all over our models, the sensitivity is relatively high, while the precision is extremely low for the minority class resulting in very low F1 scores. A pronounced imbalance
+in precision and sensitivity will show up in the F1 score and it most definitely does for all of our minority class across models.
 
-Links to images of each classification report:
-INSERT
+REFERENCE IMAGES
+Links to images of each balanced accuracy score calculation and classification report:
+
+Linear Regression with Random Oversampling details [https://github.com/CaroShaf/Credit_Risk_Analysis/blob/main/images/LRwRO.png]
+Linear Regression with SMOTE Oversampling details [https://github.com/CaroShaf/Credit_Risk_Analysis/blob/main/images/LRwSO.png]
+Linear Regression with Cluster Centroids Undersampling details [https://github.com/CaroShaf/Credit_Risk_Analysis/blob/main/images/LRwCCU.png]
+Linear Regression with SMOTEENN Over- and Under- sampling details [https://github.com/CaroShaf/Credit_Risk_Analysis/blob/main/images/LRwSOU.png]
+EasyEnsembleClassifier [https://github.com/CaroShaf/Credit_Risk_Analysis/blob/main/images/EEC.png]
+BalancedRandomForestClassifier [https://github.com/CaroShaf/Credit_Risk_Analysis/blob/main/images/BRF.png]
 
 ## Summary
-Summarize the results of the machine learning models, and include a recommendation on the model to use, if any. If you do not recommend any of the models, justify your reasoning.
+If we are to choose between the six models presented here, we would have to cautiously go with the EasyEnsembleClassifier because of its balanced accuracy score, recall and F1
+score. However, it is not much better than any of the others when it comes to precision.  This is a weak recommendation, though, and other models could be considered.  We did
+look at Support Vector Machines and it compared favorably with the Logistic Regression models.
 
-SVM model comparasion to logistic model / look at saved confusion table
-Scaling/normalization could be a factor
+A lot more could be done to tune this particular model or to explore other models.  No scaling/normalization was used in this study, so that could potentially enhance precision. 
+There are many features that could be eliminated or edited.  In the BalancedRandomForestClassifier, it was shown that the most relevant feature was the total amount of the loan.
+Some of the other higher ranking features relied on a customer's past banking history.  Those factors may show an unintended and damaging bias in predictions.
 
-In such a case, even a model that blindly classifies every transaction as non-fraudulent will achieve a very high degree of accuracy. As we saw previously, one strategy to deal with class imbalance is to use appropriate metrics to evaluate a model's performance, such as precision and recall.
+If we are to consider bias, then training data is a part of the problem. If we rely on data that comes from existing biased processes and datasets, it will teach the model to be
+biased too. Testing may also be problematic, as common practice is to keep back some of the same biased training data to use for testing the system, which would obviously fail 
+to show up any bias issues.  As a new user of machine learning algorithms, I feel the gravity of the possibility of contributing to a system which is harmful to some classes of
+people.  At the same time, the models don't do a great job on predicting default anyway, and as such, aren't even protecting lending agencies from harm either.  It is important
+to know which variables are being considered in these credit scoring models and how the variables are affecting people’s scores in addition to the effect that lack of precision
+has on the lending institutions.
+
